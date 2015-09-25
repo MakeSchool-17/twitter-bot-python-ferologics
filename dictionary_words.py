@@ -15,11 +15,13 @@ def few_words(n):
     list = string.split()  # create a dict or with each word as object
 
     str = ""  # result string
+    lenght = len(list)
 
     for i in range(n):
-        random_num = random.randint(0, (len(list) - 1))
+        random_num = random.randint(0, (lenght - 1))
         str += list[random_num] + " "
         list.pop(random_num)
+        lenght -= 1
     return str
 
 if __name__ == "__main__":
