@@ -20,7 +20,6 @@ def histogram(source_text):
         else:
             histogram[word] = 1
 
-    print(list[:250])
     print(histogram)
 
 # def unique_words(histogram):
