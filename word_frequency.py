@@ -3,7 +3,7 @@ import re
 
 
 def histogram(source_text):
-    file = open(source_text, encoding="utf-8")
+    file = open(source_text)
     string = file.read()
 
     list = re.split("[^a-zA-Z0-9]*", string.lower())
