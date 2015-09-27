@@ -1,10 +1,5 @@
 import sys
-import random
-import cProfile
 import re
-
-# profiling the script for speed
-cProfile.run('re.compile("foo|bar")')
 
 
 def histogram(source_text):
@@ -19,16 +14,27 @@ def histogram(source_text):
             histogram[word] += 1
         else:
             histogram[word] = 1
+    return histogram
 
-    print(histogram)
 
-# def unique_words(histogram):
-#
-#
-# def frequency(histogram, word):
+def unique_words(histogram):
+    uniques = 0
+    for key in histogram:
+        uniques += 1
+    return uniques
+
+
+def frequency(histogram, word):
+    return histogram.get(word, 0)
 
 
 if __name__ == "__main__":
     path = str(sys.argv[1])
+    hist = histogram(path)
+    uniques = unique_words(hist)
+    frequency_of_word_are = frequency(hist, "are")
+
     print(path)
-    histogram(path)
+    print(hist)
+    print(uniques)
+    print(frequency_of_word_are)
