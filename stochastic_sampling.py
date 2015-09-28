@@ -23,7 +23,7 @@ def randomnes_check(hist):
     list = stochastic_list(hist)
     chosen = {}
 
-    for i in range(n_of_times):
+    for i in range(n_of_times * 100):
         word = random_word(list)
 
         if chosen.get(word, 0) != 0:
