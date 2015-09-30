@@ -1,5 +1,3 @@
-import random
-
 class Node(object):
 
     def __init__(self, data, next, prev):
@@ -16,11 +14,10 @@ class DoubleList(object):
     def append(self, data):
         new_node = Node(data, None, None)
 
-        if self.head == None:
+        if self.head is None:
             self.head = self.tail = new_node
         else:
             new_node.prev = self.tail
-            new_node.next = None
             self.tail.next = new_node
             self.tail = new_node
 
@@ -51,6 +48,7 @@ class DoubleList(object):
 
             current_node = current_node.next
         print("*" * 50)
+
 
 if __name__ == "__main__":
     d = DoubleList()
