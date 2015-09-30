@@ -50,4 +50,4 @@ if __name__ == "__main__":
     s.push(7)
 
     for i in range(3):
-        print(s.pop().data)
+        print(s.pop())
