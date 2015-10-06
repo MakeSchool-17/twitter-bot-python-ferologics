@@ -6,7 +6,9 @@ def histogram(source_text):
     file = open(source_text)
     string = file.read()
 
-    list = re.split("[^a-zA-Z0-9]*", string.lower())
+    compiled_rgx = re.compile(r"[^a-zA-Z0-9]*")
+
+    list = re.split(compiled_rgx, string.lower())
     histogram = {}
 
     for word in list:
