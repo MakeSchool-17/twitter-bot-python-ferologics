@@ -9,7 +9,7 @@ class Hash_table(object):
         self.k = 0
         # size defined by kth index
         self.size = self.primes[self.k]  # always a prime
-        # blank hash table with initial size
+        # blank hash table with initial size\
         self.hash_table = [[None]] * self.size
 
     # extend the existing hash_table by the difference between the new size and old_size
