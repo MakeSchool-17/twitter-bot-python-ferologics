@@ -1,6 +1,7 @@
 class Hash_table(object):
-        # needed primes in for of '4k + 3'
-        primes = [78139, 147451, 290023, 367651, 466183, 590659, 958051, 1221751, 1561423, 1999891, 6919723, 11381863, 18722983, 39545731, 50796679, 65249803, 83546011, 107332723, 137421331, 176548243, 290395711, 479350519, 613693963, 788477863, 1013037943, 1300907011]
+
+    # needed primes in for of '4k + 3'
+    primes = [78139, 147451, 290023, 367651, 466183, 590659, 958051, 1221751, 1561423, 1999891, 6919723, 11381863, 18722983, 39545731, 50796679, 65249803, 83546011, 107332723, 137421331, 176548243, 290395711, 479350519, 613693963, 788477863, 1013037943, 1300907011]
 
     def __init__(self):
         # or load factor, number of entries in the hash_table
@@ -9,7 +10,7 @@ class Hash_table(object):
         self.k = 0
         # size defined by kth index
         self.size = self.primes[self.k]  # always a prime
-        # blank hash table with initial size\
+        # blank hash table with initial size
         self.hash_table = [None] * self.size
 
     # extend the existing hash_table by the difference between the new size and old_size
@@ -19,16 +20,31 @@ class Hash_table(object):
         new_buckets = [None] * (self.size - old_size)
         self.hash_table.extend(new_buckets)
 
+    def qhash(self, i, key):
+        print(i)
+        # use stock hash for first hash
+        if i == 0:
+            bucket_index = hash(key) % self.size
+            print(bucket_index)
+            # assign bucket's bucket index
+        else:  # if conflict then hash with qhash
+            # compute the bucket index
+            if i % 2 == 0:  # if i is even +
+                bucket_index = (hash(key) + pow(i, 2)) % self.size
+            else:           # else -
+                bucket_index = (hash(key) - pow(i, 2)) % self.size
+
+        print(bucket_index)
+        return bucket_index
+
     # assign new buckets to all bucketents in the hash_table after resize
     def rehash(self):
         # enumerate the hash_table
         for i, old_bucket in enumerate(self.hash_table):
             key, value = old_bucket
 
-            if i % 2 == 0:  # if i is even +
-                bucket_index = (hash(key) + (i * i)) % self.size
-            else:           # else -
-                bucket_index = (hash(key) - (i * i)) % self.size
+            # set the bucket index from qhash fucntion
+            bucket_index = self.qhash(i, key)
 
             new_bucket = self.hash_table[bucket_index]
 
@@ -58,18 +74,8 @@ class Hash_table(object):
 
         # store
         for i in range(0, (self.size - 1)):
-            print(i)
-            # use stock hash for first hash
-            if i == 0:
-                bucket_index = hash(key) % self.size
-                print(bucket_index)
-                # assign bucket's bucket index
-            else:  # if conflict then hash with qhash
-                # compute the bucket index
-                if i % 2 == 0:  # if i is even +
-                    bucket_index = (hash(key) + (i * i)) % self.size
-                else:           # else -
-                    bucket_index = (hash(key) - (i * i)) % self.size
+
+            bucket_index = self.qhash(i, key)
 
             # reassign the bucket's new bucket_index
             bucket = self.hash_table[bucket_index]
