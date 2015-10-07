@@ -17,43 +17,54 @@ class Hash_table(object):
     def resize(self):
         old_size = self.size
         self.k += 1
+        self.size = self.primes[self.k]
         new_buckets = [None] * (self.size - old_size)
         self.hash_table.extend(new_buckets)
 
-    def qhash(self, i, key):
-        print(i)
-        # use stock hash for first hash
-        if i == 0:
-            bucket_index = hash(key) % self.size
-            print(bucket_index)
-            # assign bucket's bucket index
-        else:  # if conflict then hash with qhash
-            # compute the bucket index
-            if i % 2 == 0:  # if i is even +
-                bucket_index = (hash(key) + pow(i, 2)) % self.size
-            else:           # else -
-                bucket_index = (hash(key) - pow(i, 2)) % self.size
+    def qhash(self, key):
 
-        print(bucket_index)
-        return bucket_index
+        # to avoid if statements later when Qhashing
+        operator = -1
+        # used to run a statement just once
+        ran = False
+
+        for i in range(0, self.size - 1):
+            print("--> Attempt #" + str(i))
+            # use stock hash for first hash
+            if ran is False:
+                bucket_index = hash(key) % self.size
+                ran = True
+                print("--> The bucket index is #" + str(bucket_index))
+                return bucket_index
+            else:  # if conflict then hash with qhash
+                # changing operator to + or - every loopthrough
+                # operator = operator * -1
+                operator *= -1
+                # compute the bucket index
+                bucket_index = (hash(key) + (pow(i, 2) * operator)) % self.size
+                print("--> The bucket index is #" + str(bucket_index))
+                return bucket_index
 
     # assign new buckets to all bucketents in the hash_table after resize
     def rehash(self):
+        i = 0
         # enumerate the hash_table
-        for i, old_bucket in enumerate(self.hash_table):
-            key, value = old_bucket
+        for old_bucket in enumerate(self.hash_table):
+            if old_bucket[1] is not None:
+                key, value = old_bucket[1]
 
-            # set the bucket index from qhash fucntion
-            bucket_index = self.qhash(i, key)
+                # set the bucket index from qhash fucntion
+                bucket_index = self.qhash(i, key)
 
-            new_bucket = self.hash_table[bucket_index]
+                new_bucket = self.hash_table[bucket_index]
 
-            if new_bucket is None:
-                new_bucket = (key, 1)
-                self.num_of_keys += 1
+                if new_bucket is None:
+                    new_bucket = (key, 1)
+                    self.num_of_keys += 1
 
-            elif new_bucket[0] == key:  # if key is = to key in bucket
-                new_bucket[1] += 1
+                elif new_bucket[0] == key:  # if key is = to key in bucket
+                    new_bucket[1] += 1
+            i += 1
 
     # test load factor and decide if should resize
     def should_resize(self):
@@ -72,51 +83,33 @@ class Hash_table(object):
             self.resize()
             self.rehash()
 
-        # store
-        for i in range(0, (self.size - 1)):
+        # assign the bucket index from qhash
+        bucket_index = self.qhash(key)
+        # reassign the bucket's new bucket_index
+        bucket = self.hash_table[bucket_index]
 
-            bucket_index = self.qhash(i, key)
+        # if bucket is None store the key and inc. num_of_keys
+        if bucket is None:  # if bucket empty -> store
+            self.hash_table[bucket_index] = (key, 1)
+            self.num_of_keys += 1
 
-            # reassign the bucket's new bucket_index
-            bucket = self.hash_table[bucket_index]
-            print(bucket)
-            # if bucket is None store the key and inc. num_of_keys
-            if bucket is None:  # if bucket empty -> store
-                self.hash_table[bucket_index] = (key, 1)
-                self.num_of_keys += 1
-                print('bucket was none')
-                return
-            # if bucket is already stored, just increment the value
-            elif bucket[0] == key:  # if key is = to key in bucket ++
-                old_tuple = self.hash_table[bucket_index]
-                new_tuple = (old_tuple[0], (old_tuple[1] + 1))
-                self.hash_table[bucket_index] = new_tuple
-                return
+        # if bucket is already stored, just increment the value
+        elif bucket[0] == key:  # if key is = to key in bucket ++
+            old_tuple = self.hash_table[bucket_index]
+            new_tuple = (old_tuple[0], (old_tuple[1] + 1))
+            self.hash_table[bucket_index] = new_tuple
 
     # get bucketent for a certain key in hash_table
     def get(self, key):
 
-        for i in range(0, (self.size - 1)):
+        bucket = self.qhash(key)
 
-            if i == 0:  # primary hash, without qhashing
-                # use stock hash for first hash
-                bucket_index = hash(key) % self.size
-                # assign bucket's bucket index
-                bucket = self.hash_table[bucket_index]
-            else:  # use qhash
-                if i % 2 == 0:  # if i is even +
-                    bucket_index = (hash(key) + (i * i)) % self.size
-                else:           # else -
-                    bucket_index = (hash(key) - (i * i)) % self.size
-                # reassign the bucket to a different bucket
-                bucket = self.hash_table[bucket_index]
-
-            # if found -->
-            if bucket[0] == key:
-                print("Found key '" + str(bucket[0]) + "' with value '" + str(bucket[1]) + "'")
-                return bucket
+        # if found -->
+        if bucket[0] == key:
+            print("--> Found key '" + str(bucket[0]) + "' with value '" + str(bucket[1]) + "'")
+            return bucket
         # if not found -->
-        print("Key " + key + " was not found T_T")
+        print("--> Key " + key + " was not found T_T")
         return None
 
     # hash_table all the keys in all the buckets in the tuples
@@ -143,15 +136,18 @@ if __name__ == "__main__":
     hash_t = Hash_table()
 
     hash_t.insert("meh")
-    hash_t.insert("meh")
-    hash_t.insert("meh")
-
-    hash_t.insert("huehue")
-    hash_t.insert("huehue")
-    hash_t.insert("huehue")
 
     hash_t.get("meh")
-    hash_t.get("huehue")
+
+    print(hash_t.keys())
+    print(hash_t.values())
+
+    hash_t.resize()
+    hash_t.rehash()
+
+    hash_t.insert("meh")
+
+    hash_t.get("meh")
 
     print(hash_t.keys())
     print(hash_t.values())
